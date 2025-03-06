@@ -140,6 +140,30 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
         .logout-btn:hover {
             background: darkred;
         }
+        .view-btn {
+            background: blue;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .view-btn:hover {
+            background: darkblue;
+        }
+        .review-btn {
+            background: green;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .review-btn:hover {
+            background: darkgreen;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +182,8 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
             <th>Image</th>
             <th>Status</th>
             <th>Action</th>
+            <th>View</th>
+            <th>Reviews</th>
         </tr>
         <?php while ($row = $result->fetch_assoc()) { ?>
         <tr>
@@ -180,6 +206,16 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
                     </select>
                     <button type="submit" name="update">Update</button>
                 </form>
+            </td>
+            <td>
+                <a href="complaint_details.php?id=<?php echo $row['id']; ?>">
+                    <button class="view-btn">View</button>
+                </a>
+            </td>
+            <td>
+                <a href="view_reviews.php?id=<?php echo $row['id']; ?>">
+                    <button class="review-btn">See Reviews</button>
+                </a>
             </td>
         </tr>
         <?php } ?>

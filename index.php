@@ -29,15 +29,16 @@ if (!isset($_SESSION['user_id'])) {
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
+            text-align: center;
         }
         h2 {
-            text-align: center;
             color: #333;
         }
         label {
             font-weight: bold;
             display: block;
             margin-top: 10px;
+            text-align: left;
         }
         select, textarea, input {
             width: 100%;
@@ -58,6 +59,12 @@ if (!isset($_SESSION['user_id'])) {
         }
         button:hover {
             background-color: #0056b3;
+        }
+        .view-complaints {
+            background-color: #28a745;
+        }
+        .view-complaints:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -81,6 +88,7 @@ if (!isset($_SESSION['user_id'])) {
 
             <button type="submit" name="submit">Submit Complaint</button>
         </form>
+        <button class="view-complaints" onclick="window.location.href='complaints.php'">View Complaints</button>
     </div>
 </body>
 </html>

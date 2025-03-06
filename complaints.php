@@ -101,6 +101,19 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
         .logout-btn:hover {
             background: darkred;
         }
+        .review-btn {
+            background-color: #ffc107;
+            color: black;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .review-btn:hover {
+            background-color: #e0a800;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +131,7 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
             <th>Description</th>
             <th>Image</th>
             <th>Status</th>
+            <th>Review</th>
         </tr>
         <?php while ($row = $result->fetch_assoc()) { ?>
         <tr>
@@ -130,6 +144,9 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
                 <?php } else { echo "No Image"; } ?>
             </td>
             <td><?php echo $row['status']; ?></td>
+            <td>
+                <button class="review-btn" onclick="window.location.href='review_complaint.php?id=<?php echo $row['id']; ?>'">Review</button>
+            </td>
         </tr>
         <?php } ?>
     </table>
