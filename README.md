@@ -104,7 +104,7 @@ mv Smart-Complaint-Feedback-System /path-to-htdocs-or-www/
 bash
 Copy
 Edit
-http://localhost/Smart-Complaint-Feedback-System]
+http://localhost/Smart-Complaint-Feedback-System-main
 
 ## Team Contributions
 - [Shahwaz Alam]: [Frontend ]
