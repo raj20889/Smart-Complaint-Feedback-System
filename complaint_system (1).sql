@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 06, 2025 at 09:22 AM
+-- Generation Time: Mar 06, 2025 at 10:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,33 @@ INSERT INTO `complaints` (`id`, `user_id`, `category`, `description`, `image_pat
 (10, 3, 'Hostel', 'hh', '', 'Resolved', '2025-03-06 07:42:00'),
 (11, 1, 'Classroom', 'qq', '', 'Resolved', '2025-03-06 07:58:49'),
 (12, 12, 'Classroom', 'jdfnjbghfsjghdfjhbg', 'uploads/1741248104_Screenshot (1).png', 'Pending', '2025-03-06 08:01:44'),
-(13, 1, 'Hostel', 'qqq', '', 'In Progress', '2025-03-06 08:07:48');
+(13, 1, 'Hostel', 'qqq', '', 'Resolved', '2025-03-06 08:07:48'),
+(14, 1, 'Hostel', '11', '', 'Resolved', '2025-03-06 08:23:54'),
+(15, 1, 'Hostel', '1', '', 'Pending', '2025-03-06 09:02:55'),
+(16, 1, 'Hostel', '1', '', 'In Progress', '2025-03-06 09:17:48');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review`
+--
+
+CREATE TABLE `review` (
+  `id` int(11) NOT NULL,
+  `complaint_id` int(11) NOT NULL,
+  `reviewer_id` int(11) NOT NULL,
+  `review_text` text NOT NULL,
+  `reviewed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`id`, `complaint_id`, `reviewer_id`, `review_text`, `reviewed_at`) VALUES
+(1, 15, 1, 'qqq', '2025-03-06 09:14:04'),
+(2, 13, 1, 'gg', '2025-03-06 09:14:43'),
+(3, 16, 1, 'nbewjbdfhjebwhf', '2025-03-06 09:33:32');
 
 -- --------------------------------------------------------
 
@@ -89,6 +115,14 @@ ALTER TABLE `complaints`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `review`
+--
+ALTER TABLE `review`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `complaint_id` (`complaint_id`),
+  ADD KEY `reviewer_id` (`reviewer_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -103,7 +137,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `complaints`
 --
 ALTER TABLE `complaints`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `review`
+--
+ALTER TABLE `review`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -120,6 +160,13 @@ ALTER TABLE `users`
 --
 ALTER TABLE `complaints`
   ADD CONSTRAINT `complaints_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `review`
+--
+ALTER TABLE `review`
+  ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
