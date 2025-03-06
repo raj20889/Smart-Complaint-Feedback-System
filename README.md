@@ -1,5 +1,5 @@
 # Smart-Complaint-Review-System
-🚀 Smart Complaint &amp; System – A web app for students &amp; faculty to submit complaints (Hostel, WiFi, Food, etc.), track status, and get updates. Admins manage &amp; resolve issues. Features: upvotes, feedback, AI categorization (optional). Built with PHP, MySQL, HTML, CSS, and JS.
+🚀 Smart Complaint Review &amp; System – A web app for students &amp; faculty to submit complaints (Hostel, WiFi, Food, etc.), track status, and get updates. Admins manage &amp; resolve issues. Features: upvotes, feedback, AI categorization (optional). Built with PHP, MySQL, HTML, CSS, and JS.
 
 # [Smart Complaint Review system] 🎯
 
