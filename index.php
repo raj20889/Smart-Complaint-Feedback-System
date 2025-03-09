@@ -343,7 +343,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 CUCEK | All Rights Reserved | Designed by <strong>Mohit Raj</strong></p>
+        <p>&copy; 2025 CUCEK | All Rights Reserved | Designed by <strong>Mohit Raj and Shahwaz Alam</strong></p>
     </div>
 </footer>
 
