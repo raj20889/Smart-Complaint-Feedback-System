@@ -53,7 +53,10 @@ if (isset($_POST['update'])) {
     }
 }
 
-$result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
+// Fetch complaints sorted by votes (highest first)
+$result = $conn->query("SELECT complaints.*, COUNT(votes.id) AS vote_count FROM complaints 
+                        LEFT JOIN votes ON complaints.id = votes.complaint_id 
+                        GROUP BY complaints.id ORDER BY vote_count DESC, created_at DESC");
 ?>
 
 <!DOCTYPE html>
@@ -62,179 +65,75 @@ $result = $conn->query("SELECT * FROM complaints ORDER BY created_at DESC");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-            text-align: center;
-        }
-        h2 {
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        img {
-            width: 100px;
-            height: 100px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: transform 0.2s;
-        }
-        img:hover {
-            transform: scale(1.1);
-        }
-        select, button {
-            padding: 5px;
-            font-size: 14px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            text-align: center;
-        }
-        .modal-content {
-            display: block;
-            margin: auto;
-            max-width: 90%;
-            max-height: 90%;
-        }
-        .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .logout-btn {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            background: red;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .logout-btn:hover {
-            background: darkred;
-        }
-        .view-btn {
-            background: blue;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .view-btn:hover {
-            background: darkblue;
-        }
-        .review-btn {
-            background: green;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .review-btn:hover {
-            background: darkgreen;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-6 text-center">
 
-    <form method="POST" style="position: absolute; top: 10px; right: 20px;">
-        <button type="submit" name="logout" class="logout-btn">Logout</button>
+    <form method="POST" class="absolute top-4 right-6">
+        <button type="submit" name="logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">Logout</button>
     </form>
 
-    <h2>Admin Panel - Manage Complaints</h2>
+    <h2 class="text-2xl font-bold text-gray-800">Admin Panel - Manage Complaints</h2>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Image</th>
-            <th>Status</th>
-            <th>Action</th>
-            <th>View</th>
-            <th>Reviews</th>
-        </tr>
-        <?php while ($row = $result->fetch_assoc()) { ?>
-        <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td><?php echo $row['category']; ?></td>
-            <td><?php echo $row['description']; ?></td>
-            <td>
-                <?php if (!empty($row['image_path'])) { ?>
-                    <img src="<?php echo $row['image_path']; ?>" onclick="openModal('<?php echo $row['image_path']; ?>')">
-                <?php } else { echo "No Image"; } ?>
-            </td>
-            <td><?php echo $row['status']; ?></td>
-            <td>
-                <form method="POST">
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <select name="status">
-                        <option value="Pending" <?php if ($row['status'] == "Pending") echo "selected"; ?>>Pending</option>
-                        <option value="In Progress" <?php if ($row['status'] == "In Progress") echo "selected"; ?>>In Progress</option>
-                        <option value="Resolved" <?php if ($row['status'] == "Resolved") echo "selected"; ?>>Resolved</option>
-                    </select>
-                    <button type="submit" name="update">Update</button>
-                </form>
-            </td>
-            <td>
-                <a href="complaint_details.php?id=<?php echo $row['id']; ?>">
-                    <button class="view-btn">View</button>
-                </a>
-            </td>
-            <td>
-                <a href="view_reviews.php?id=<?php echo $row['id']; ?>">
-                    <button class="review-btn">See Reviews</button>
-                </a>
-            </td>
-        </tr>
-        <?php } ?>
-    </table>
+    <div class="overflow-x-auto mt-6">
+        <table class="w-full border-collapse border border-gray-300 bg-white shadow-lg">
+            <tr class="bg-gray-200">
+                <th class="p-3 border">ID</th>
+                <th class="p-3 border">Category</th>
+                <th class="p-3 border">Description</th>
+                <th class="p-3 border">Image</th>
+                <th class="p-3 border">Votes</th>
+                <th class="p-3 border">Status</th>
+                <th class="p-3 border">Action</th>
+                <th class="p-3 border">View</th>
+                <th class="p-3 border">Reviews</th>
+            </tr>
+            <?php while ($row = $result->fetch_assoc()) { ?>
+            <tr class="border">
+                <td class="p-3 border"> <?php echo $row['id']; ?> </td>
+                <td class="p-3 border"> <?php echo $row['category']; ?> </td>
+                <td class="p-3 border"> <?php echo $row['description']; ?> </td>
+                <td class="p-3 border">
+                    <?php if (!empty($row['image_path'])) { ?>
+                        <img src="<?php echo $row['image_path']; ?>" class="w-20 h-20 object-cover rounded cursor-pointer hover:scale-110 transition-transform" onclick="openModal('<?php echo $row['image_path']; ?>')">
+                    <?php } else { echo "No Image"; } ?>
+                </td>
+                <td class="p-3 border font-bold <?php echo ($row['vote_count'] > 10) ? 'text-yellow-500' : ''; ?>"> <?php echo $row['vote_count']; ?> </td>
+                <td class="p-3 border"> <?php echo $row['status']; ?> </td>
+                <td class="p-3 border">
+                    <form method="POST">
+                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                        <select name="status" class="p-1 border rounded">
+                            <option value="Pending" <?php if ($row['status'] == "Pending") echo "selected"; ?>>Pending</option>
+                            <option value="In Progress" <?php if ($row['status'] == "In Progress") echo "selected"; ?>>In Progress</option>
+                            <option value="Resolved" <?php if ($row['status'] == "Resolved") echo "selected"; ?>>Resolved</option>
+                        </select>
+                        <button type="submit" name="update" class="ml-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">Update</button>
+                    </form>
+                </td>
+                <td class="p-3 border">
+                    <a href="complaint_details.php?id=<?php echo $row['id']; ?>" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">View</a>
+                </td>
+                <td class="p-3 border">
+                    <a href="view_reviews.php?id=<?php echo $row['id']; ?>" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700">Reviews</a>
+                </td>
+            </tr>
+            <?php } ?>
+        </table>
+    </div>
 
-    <!-- Modal for Image Preview -->
-    <div id="imageModal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="modalImage">
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex justify-center items-center">
+        <span class="absolute top-6 right-10 text-white text-3xl cursor-pointer" onclick="closeModal()">&times;</span>
+        <img class="max-w-full max-h-full" id="modalImage">
     </div>
 
     <script>
         function openModal(imageSrc) {
             document.getElementById("modalImage").src = imageSrc;
-            document.getElementById("imageModal").style.display = "block";
+            document.getElementById("imageModal").classList.remove("hidden");
         }
-
         function closeModal() {
-            document.getElementById("imageModal").style.display = "none";
+            document.getElementById("imageModal").classList.add("hidden");
         }
     </script>
 
